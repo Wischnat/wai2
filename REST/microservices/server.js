@@ -1,6 +1,6 @@
-const path = require('path');
-const gateway = require('express-gateway');
+import path from "path";
+import gateway from "express-gateway";
+import "./user";
+import "./music";
 
-gateway()
-  .load(path.join(__dirname, 'config'))
-  .run();
+gateway().load(path.join(__dirname, "config")).run();
