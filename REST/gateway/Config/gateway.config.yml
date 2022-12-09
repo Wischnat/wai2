@@ -4,20 +4,21 @@ admin:
   port: 9876
 apiEndpoints:
   api:
-    paths: /ip
+    paths:
+      - /ip
   actors:
     paths:
-      - /actors
-      - /actors/*
+      - '/actors'
+      - '/actors/*'
   movies:
     paths:
-      - /movies
-      - /movies/*
+      - '/movies'
+      - '/movies/*'
 serviceEndpoints:
   httpbin:
     url: 'https://httpbin.org'
   actorService:
-    url: 'http://actor:3000'
+    url: 'http://api-actor:3000'
   movieService:
     url: 'http://412143bfb37a.ngrok.io'
 policies:
@@ -34,9 +35,6 @@ pipelines:
     apiEndpoints:
       - actors
     policies:
-      - log:
-          action:
-            message: 'users ${req.method}'
       - proxy:
           - action:
               serviceEndpoint: actorService
