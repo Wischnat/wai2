@@ -2,7 +2,7 @@ version: "3.8"
 
 networks:
   microservices:
-  big_web:
+  actor-net:
 
 services:
   gateway:
@@ -25,17 +25,29 @@ services:
       - "3000:3000"
     networks:
       - microservices
-#   db:
-#     image: postgres
-#     restart: always
-#     environment:
-#       - POSTGRES_DB= test_db
-#       - POSTGRES_USER= test_user
-#       - POSTGRES_PASSWORD= root
-#     ports: -5432:5432
-#     volumes:
-#       - db-data:/var/lib/postgresql/data
+      - actor-net
+    depends_on:
+      - api-actor-db
 
-# volumes:
-#   db-data:
-#     driver: local
+  api-actor-db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: author_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+    ports: 
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      - './services/Actor/init.sql:/docker-entrypoint-initdb.d/init.sql'
+    networks:
+      - actor-net
+
+volumes:
+  db-data:
+    driver: local

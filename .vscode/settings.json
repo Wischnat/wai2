@@ -1,0 +1,14 @@
+{
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 5432,
+            "driver": "PostgreSQL",
+            "name": "wai2_authors",
+            "database": "author_db",
+            "username": "postgres",
+            "password": "postgres"
+        }
+    ]
+}
