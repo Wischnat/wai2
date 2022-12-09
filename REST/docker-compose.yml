@@ -1,17 +1,40 @@
 version: "3.8"
 
-services:
-  db:
-    image: postgres
-    restart: always
-    environment:
-      - POSTGRES_DB= test_db
-      - POSTGRES_USER= test_user
-      - POSTGRES_PASSWORD= root
-    ports: -5432:5432
-    volumes:
-      - db-data:/var/lib/postgresql/data
+networks:
+  microservices:
+    driver: bridge
+  big_web:
 
-volumes:
-  db-data:
-    driver: local
+services:
+  gateway:
+    build: ./gateway
+    container_name: gateway
+    ports:
+      - "8080:8080"
+      - "9876:9876"
+      - "8443:8443"
+    environment:
+      - LOG_LEVEL=debug
+    links:
+      - actor
+
+  actor:
+    build: ./services/Actor
+    container_name: actor
+    command: "node index.js"
+    ports:
+      - "3000:3000"
+#   db:
+#     image: postgres
+#     restart: always
+#     environment:
+#       - POSTGRES_DB= test_db
+#       - POSTGRES_USER= test_user
+#       - POSTGRES_PASSWORD= root
+#     ports: -5432:5432
+#     volumes:
+#       - db-data:/var/lib/postgresql/data
+
+# volumes:
+#   db-data:
+#     driver: local
