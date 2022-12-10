@@ -17,7 +17,7 @@ app.get("/actors", async (req, res, next) => {
   //   "Russel Crowe",
   //   "Tom Hanks",
   // ];
-  res.json(entries);
+  res.json(entries.rows);
 });
 
 
