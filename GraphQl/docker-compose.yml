@@ -1,0 +1,50 @@
+version: "3.8"
+
+networks:
+  microservices:
+  author-net:
+
+services:
+  gateway:
+    build: ./gateway
+    container_name: gateway
+    ports:
+      - "8080:8080"
+      - "4000:4000"
+    environment:
+      - LOG_LEVEL=debug
+    networks:
+      - microservices
+
+  api-author:
+    build: ./services/author
+    container_name: api-author
+    command: "node index.js"
+    ports:
+      - "4001:4001"
+    networks:
+      - microservices
+      - author-net
+
+  api-actor-db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: author_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+    ports: 
+      - "5432:5432"
+    volumes:
+      - graphql-db-data:/var/lib/postgresql/data
+      - './services/author/init.sql:/docker-entrypoint-initdb.d/init.sql'
+    networks:
+      - author-net
+
+volumes:
+  graphql-db-data:
+    driver: local

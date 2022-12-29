@@ -1,0 +1,17 @@
+{
+  "name": "authors",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@apollo/server": "^4.2.2",
+    "@apollo/subgraph": "^2.2.2",
+    "datasource-sql": "^2.0.1",
+    "graphql": "^16.6.0"
+  }
+}
