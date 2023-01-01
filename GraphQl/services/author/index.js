@@ -16,8 +16,8 @@
 const ApolloServer =  require('@apollo/server');
 const startStandaloneServer = require('@apollo/server/standalone');
 const { buildSubgraphSchema } = require('@apollo/subgraph');
+const { gql } = require('graphql-tag');
 const MyDatabase = require('./mydatabase');
-
 const authors = [
     {
       author_id: 1,
@@ -30,19 +30,19 @@ const authors = [
 // A schema is a collection of type definitions (hence "typeDefs")
 // that together define the "shape" of queries that are executed against
 // your data.
-const typeDefs = `#graphql
+const typeDefs = gql`
   extend schema @link(url: "https://specs.apollo.dev/federation/v2.0", import: ["@key", "@shareable"])
   
+  type Query {
+    authors: [Author]
+  }
+
   type Author @key(fields: "author_id") {
     author_id: ID!
     firstname: String
     lastname: String
     age: Int
   }
-
-  type Query {
-		authors: [Author]
-	}
 `;
 
 const resolvers = {
@@ -50,27 +50,31 @@ const resolvers = {
         authors: () => authors
     },
     Author: {
-        __resolveReference(author, { getAuthors }) {
-            return getAuthors();
+        __resolveReference(author) {
+            // Aus dem startStandaloneServer
+            return dataSources.authorsAPI.getAuthors();
           },
     }
 }
 
-const server = new ApolloServer({
+const server = new ApolloServer.ApolloServer({
     schema: buildSubgraphSchema({ typeDefs, resolvers }),
 });
 
 async function start() {
-    const db = new MyDatabase({
-        client: "pg",
-        connection: {
-            host: 'api-actor-db',
-            user: 'postgres',
-            password: 'postgres',
-            database: 'author_db',
-            debug: true,
-        }
-      })
+  const knexConfig = {
+    client: "pg",
+    connection: {
+        host: 'api-actor-db',
+        user: 'postgres',
+        password: 'postgres',
+        database: 'author_db',
+        debug: true,
+    }
+  }
+
+    const db = new MyDatabase(knexConfig);
+
     const { url } = await startStandaloneServer.startStandaloneServer(server, {
         listen: { port: 4001 },
         dataSources: {
