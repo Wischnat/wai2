@@ -1,4 +1,18 @@
-// https://www.apollographql.com/docs/apollo-server/getting-started/
+// ! Implementing a subgraph with Apollo Server
+// https://www.apollographql.com/docs/apollo-server/using-federation/apollo-subgraph-setup
+// ! API Reference: @apollo/subgraph
+// https://www.apollographql.com/docs/apollo-server/using-federation/api/apollo-subgraph/
+// ! Entities 
+// https://www.apollographql.com/docs/federation/entities/
+
+// ! Resolver
+// https://www.apollographql.com/docs/apollo-server/using-federation/api/apollo-subgraph/#__resolvereference
+// ! Data sources
+// https://www.apollographql.com/docs/apollo-server/v2/data/data-sources/
+// import { ApolloServer } from '@apollo/server';
+// import { startStandaloneServer } from '@apollo/server/standalone';
+// import gql from 'graphql-tag';
+// import { buildSubgraphSchema } from '@apollo/subgraph';
 const ApolloServer =  require('@apollo/server');
 const startStandaloneServer = require('@apollo/server/standalone');
 const { buildSubgraphSchema } = require('@apollo/subgraph');
