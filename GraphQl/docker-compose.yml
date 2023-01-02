@@ -3,6 +3,7 @@ version: "3.8"
 networks:
   microservices:
   author-net:
+  book-net:
 
 services:
   gateway:
@@ -17,6 +18,7 @@ services:
       - microservices
     depends_on:
       - api-author
+      - api-book
 
   api-author:
     build: ./services/author
@@ -30,7 +32,19 @@ services:
       - microservices
       - author-net
 
-  api-actor-db:
+  api-book:
+    build: ./services/book
+    container_name: api-book
+    command: "node index.js"
+    ports:
+      - "4002:4002"
+    environment:
+      - LOG_LEVEL=debug
+    networks:
+      - microservices
+      - book-net
+
+  api-author-db:
     image: postgres
     restart: always
     environment:
@@ -48,6 +62,25 @@ services:
       - './services/author/init.sql:/docker-entrypoint-initdb.d/init.sql'
     networks:
       - author-net
+  
+  api-book-db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: book_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+    ports: 
+      - "5433:5433"
+    volumes:
+      - graphql-db-data:/var/lib/postgresql/data
+      - './services/book/init.sql:/docker-entrypoint-initdb.d/init.sql'
+    networks:
+      - book-net
 
 volumes:
   graphql-db-data:

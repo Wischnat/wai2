@@ -42,6 +42,7 @@ const gateway = new ApolloGateway({
   supergraphSdl: new IntrospectAndCompose({
     subgraphs: [
       { name: 'author', url: 'http://api-author:4001' },
+      { name: 'book', url: 'http://api-book:4002' },
     ],
   }),
 });
