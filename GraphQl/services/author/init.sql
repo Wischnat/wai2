@@ -2,12 +2,11 @@
 drop table if exists authors;
 
 CREATE TABLE authors (
-  author_id INT PRIMARY KEY,
+  author_id SERIAL PRIMARY KEY,
   firstname VARCHAR(255),
   lastname VARCHAR(255),
   age INT
 );
 
-
-INSERT INTO authors (author_id, firstname, lastname, age) VALUES (1, 'John', 'Doe', 100);
-INSERT INTO authors (author_id, firstname, lastname, age) VALUES (2, 'Alex', 'Wick', 55);
+INSERT INTO authors (firstname, lastname, age) VALUES ('John', 'Doe', 100);
+INSERT INTO authors (firstname, lastname, age) VALUES ('Alex', 'Wick', 55);

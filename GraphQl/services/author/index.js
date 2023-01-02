@@ -52,6 +52,12 @@ const typeDefs = gql`
     authors: [Author]
   }
 
+  type Mutation {
+    addAuthor(firstname: String!, lastname: String!, age: Int!): Author
+    updateAuthor(author_id: ID!, firstname: String, lastname: String, age: Int): Author
+    deleteAuthor(author_id: ID!): Author
+  }
+
   type Author @key(fields: "author_id") {
     author_id: ID!
     firstname: String
@@ -74,12 +80,26 @@ const resolvers = {
           return await dataSources.authorsAPI.getAuthors();
         },
     },
+    Mutation: {
+      addAuthor: async(_, { firstname, lastname, age }, { dataSources }) => {
+        const author = await dataSources.authorsAPI.addAuthor(firstname, lastname, age);
+        return author[0];
+      },
+      updateAuthor: async(_, {author_id, firstname, lastname, age }, { dataSources }) => {
+        const author = await dataSources.authorsAPI.updateAuthor(author_id, {firstname, lastname, age});
+        return author[0];
+      },
+      deleteAuthor: async(_, {author_id }, { dataSources }) => {
+        const author = await dataSources.authorsAPI.deleteAuthor(author_id);
+        return author[0];
+      }
+    },
     Author: {
         async __resolveReference({author_id}, __, { dataSources }){
             return await dataSources.authorsAPI.getAuthors(author_id);
           },
     }
-}
+ }
 
 
 
