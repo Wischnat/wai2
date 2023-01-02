@@ -9,5 +9,5 @@ CREATE TABLE authors (
 );
 
 
-INSERT INTO authors (author_id, firstname, lastname, age) VALUES (1, 'John', 'Doe', 25);
+INSERT INTO authors (author_id, firstname, lastname, age) VALUES (1, 'John', 'Doe', 100);
 INSERT INTO authors (author_id, firstname, lastname, age) VALUES (2, 'Alex', 'Wick', 55);

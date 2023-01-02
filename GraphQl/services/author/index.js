@@ -13,19 +13,33 @@
 // import { startStandaloneServer } from '@apollo/server/standalone';
 // import gql from 'graphql-tag';
 // import { buildSubgraphSchema } from '@apollo/subgraph';
+// ! ARGS
+// https://www.apollographql.com/tutorials/lift-off-part3/graphql-arguments
 const ApolloServer =  require('@apollo/server');
 const startStandaloneServer = require('@apollo/server/standalone');
 const { buildSubgraphSchema } = require('@apollo/subgraph');
 const { gql } = require('graphql-tag');
 const MyDatabase = require('./mydatabase');
-const authors = [
-    {
-      author_id: 1,
-      firstname: 'John',
-      lastname: 'Doe',
-      age: 25,
-    },
-];
+
+const knexConfig = {
+  client: "pg",
+  connection: {
+      host: 'api-actor-db',
+      user: 'postgres',
+      password: 'postgres',
+      database: 'author_db',
+      debug: true,
+  }
+}
+
+// const authors = [
+//     {
+//       author_id: 1,
+//       firstname: 'John',
+//       lastname: 'Doe',
+//       age: 25,
+//     },
+// ];
 
 // A schema is a collection of type definitions (hence "typeDefs")
 // that together define the "shape" of queries that are executed against
@@ -34,6 +48,7 @@ const typeDefs = gql`
   extend schema @link(url: "https://specs.apollo.dev/federation/v2.0", import: ["@key", "@shareable"])
   
   type Query {
+    author(author_id: ID!): Author,
     authors: [Author]
   }
 
@@ -45,41 +60,42 @@ const typeDefs = gql`
   }
 `;
 
+// Next, we add a reference resolver for the User entity. 
+// A reference resolver tells the gateway how to fetch an 
+// entity by its @key fields:
 const resolvers = {
     Query: {
-        authors: () => authors
+        author: async (_, {author_id}, { dataSources }) => {
+          const res = await dataSources.authorsAPI.getAuthorByID(author_id);
+          return res[0];
+        },
+        authors: async (_, __, { dataSources }) => {
+          // console.log(dataSources);
+          return await dataSources.authorsAPI.getAuthors();
+        },
     },
     Author: {
-        __resolveReference(author) {
-            // Aus dem startStandaloneServer
-            return dataSources.authorsAPI.getAuthors();
+        async __resolveReference({author_id}, __, { dataSources }){
+            return await dataSources.authorsAPI.getAuthors(author_id);
           },
     }
 }
+
+
 
 const server = new ApolloServer.ApolloServer({
     schema: buildSubgraphSchema({ typeDefs, resolvers }),
 });
 
+
 async function start() {
-  const knexConfig = {
-    client: "pg",
-    connection: {
-        host: 'api-actor-db',
-        user: 'postgres',
-        password: 'postgres',
-        database: 'author_db',
-        debug: true,
-    }
-  }
-
-    const db = new MyDatabase(knexConfig);
-
     const { url } = await startStandaloneServer.startStandaloneServer(server, {
         listen: { port: 4001 },
-        dataSources: {
-            authorsAPI: db,
-        }
+        context: () => ({    
+          dataSources: {
+            authorsAPI: new MyDatabase(knexConfig),
+          },
+        })
     });
     console.log(`🚀  Server ready at: ${url}`);
 };

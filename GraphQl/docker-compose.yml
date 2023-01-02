@@ -24,6 +24,8 @@ services:
     command: "node index.js"
     ports:
       - "4001:4001"
+    environment:
+      - LOG_LEVEL=debug
     networks:
       - microservices
       - author-net
