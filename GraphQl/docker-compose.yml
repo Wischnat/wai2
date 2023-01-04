@@ -31,6 +31,8 @@ services:
     networks:
       - microservices
       - author-net
+    depends_on:
+      - api-author-db
 
   api-book:
     build: ./services/book
@@ -43,6 +45,8 @@ services:
     networks:
       - microservices
       - book-net
+    depends_on:
+      - api-book-db
 
   api-author-db:
     image: postgres
@@ -58,7 +62,7 @@ services:
     ports: 
       - "5432:5432"
     volumes:
-      - graphql-db-data:/var/lib/postgresql/data
+      - graphql-author-db-data:/var/lib/postgresql/data
       - './services/author/init.sql:/docker-entrypoint-initdb.d/init.sql'
     networks:
       - author-net
@@ -77,11 +81,13 @@ services:
     ports: 
       - "5433:5433"
     volumes:
-      - graphql-db-data:/var/lib/postgresql/data
+      - graphql-book-db-data:/var/lib/postgresql/data
       - './services/book/init.sql:/docker-entrypoint-initdb.d/init.sql'
     networks:
       - book-net
 
 volumes:
-  graphql-db-data:
+  graphql-author-db-data:
+    driver: local
+  graphql-book-db-data:
     driver: local
