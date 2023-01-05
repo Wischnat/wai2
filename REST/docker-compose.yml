@@ -2,7 +2,7 @@ version: "3.8"
 
 networks:
   microservices:
-  actor-net:
+  author-net:
 
 services:
   gateway:
@@ -17,19 +17,19 @@ services:
     networks:
       - microservices
 
-  api-actor:
-    build: ./services/Actor
-    container_name: api-actor
+  api-author:
+    build: ./services/Author
+    container_name: api-author
     command: "node index.js"
     ports:
       - "3000:3000"
     networks:
       - microservices
-      - actor-net
+      - author-net
     depends_on:
-      - api-actor-db
+      - api-author-db
 
-  api-actor-db:
+  api-author-db:
     image: postgres
     restart: always
     environment:
@@ -44,9 +44,9 @@ services:
       - "5432:5432"
     volumes:
       - db-data:/var/lib/postgresql/data
-      - './services/Actor/init.sql:/docker-entrypoint-initdb.d/init.sql'
+      - './services/Author/init.sql:/docker-entrypoint-initdb.d/init.sql'
     networks:
-      - actor-net
+      - author-net
 
 volumes:
   db-data:

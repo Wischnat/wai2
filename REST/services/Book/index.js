@@ -3,13 +3,13 @@ let app = express();
 app.listen(8000, () => {
   console.log("Server running on port 8000");
 });
-app.get("/movies", (req, res, next) => {
-  let array_movies = [
+app.get("/books", (req, res, next) => {
+  let array_books = [
     "Mission Impossible",
     "Pirates of Carribean",
     "Inception",
     "Gladiator",
     "The Terminal",
   ];
-  res.json(array_movies);
+  res.json(array_books);
 });

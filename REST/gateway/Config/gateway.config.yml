@@ -6,20 +6,20 @@ apiEndpoints:
   api:
     paths:
       - /ip
-  actors:
+  authors:
     paths:
-      - '/actors'
-      - '/actors/*'
-  movies:
+      - '/authors'
+      - '/authors/*'
+  books:
     paths:
-      - '/movies'
-      - '/movies/*'
+      - '/books'
+      - '/books/*'
 serviceEndpoints:
   httpbin:
     url: 'https://httpbin.org'
-  actorService:
-    url: 'http://api-actor:3000'
-  movieService:
+  authorService:
+    url: 'http://api-author:3000'
+  bookService:
     url: 'http://412143bfb37a.ngrok.io'
 policies:
   - basic-auth
@@ -31,21 +31,21 @@ policies:
   - proxy
   - rate-limit
 pipelines:
-  actorPipeline:
+  authorPipeline:
     apiEndpoints:
-      - actors
+      - authors
     policies:
       - proxy:
           - action:
-              serviceEndpoint: actorService
+              serviceEndpoint: authorService
               changeOrigin: true
-  moviePipeline:
+  bookPipeline:
     apiEndpoints:
-      - movies
+      - books
     policies:
       - proxy:
           - action:
-              serviceEndpoint: movieService
+              serviceEndpoint: bookService
               changeOrigin: true
   default:
     apiEndpoints:
