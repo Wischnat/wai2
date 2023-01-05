@@ -3,6 +3,7 @@ version: "3.8"
 networks:
   microservices:
   author-net:
+  book-net:
 
 services:
   gateway:
@@ -16,6 +17,9 @@ services:
       - LOG_LEVEL=debug
     networks:
       - microservices
+    depends_on:
+      - api-author
+      - api-book
 
   api-author:
     build: ./services/Author
@@ -55,10 +59,10 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - db-data:/var/lib/postgresql/data
+      - rest-author-db-data:/var/lib/postgresql/data
       - "./services/Author/init.sql:/docker-entrypoint-initdb.d/init.sql"
     networks:
-      - authbor-net
+      - author-net
 
   api-book-db:
     image: postgres
@@ -72,9 +76,9 @@ services:
         max-size: 10m
         max-file: "3"
     ports:
-      - "5433:5433"
+      - "5433:5432"
     volumes:
-      - rest-author-db-data:/var/lib/postgresql/data
+      - rest-book-db-data:/var/lib/postgresql/data
       - "./services/Book/init.sql:/docker-entrypoint-initdb.d/init.sql"
     networks:
       - book-net
