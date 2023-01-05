@@ -20,7 +20,7 @@ serviceEndpoints:
   authorService:
     url: 'http://api-author:3000'
   bookService:
-    url: 'http://412143bfb37a.ngrok.io'
+    url: 'http://api-book:3001'
 policies:
   - basic-auth
   - cors

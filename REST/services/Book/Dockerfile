@@ -2,4 +2,4 @@ FROM node
 
 COPY . .
 
-EXPOSE 8000
+EXPOSE 3001

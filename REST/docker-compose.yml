@@ -29,6 +29,18 @@ services:
     depends_on:
       - api-author-db
 
+  api-book:
+    build: ./services/Book
+    container_name: api-book
+    command: "node index.js"
+    ports:
+      - "3001:3001"
+    networks:
+      - microservices
+      - book-net
+    depends_on:
+      - api-book-db
+
   api-author-db:
     image: postgres
     restart: always
@@ -40,14 +52,35 @@ services:
       options:
         max-size: 10m
         max-file: "3"
-    ports: 
+    ports:
       - "5432:5432"
     volumes:
       - db-data:/var/lib/postgresql/data
-      - './services/Author/init.sql:/docker-entrypoint-initdb.d/init.sql'
+      - "./services/Author/init.sql:/docker-entrypoint-initdb.d/init.sql"
     networks:
-      - author-net
+      - authbor-net
+
+  api-book-db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: book_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+    ports:
+      - "5433:5433"
+    volumes:
+      - rest-author-db-data:/var/lib/postgresql/data
+      - "./services/Book/init.sql:/docker-entrypoint-initdb.d/init.sql"
+    networks:
+      - book-net
 
 volumes:
-  db-data:
+  rest-author-db-data:
+    driver: local
+  rest-book-db-data:
     driver: local
