@@ -8,19 +8,21 @@ apiEndpoints:
       - /ip
   authors:
     paths:
-      - '/authors'
-      - '/authors/*'
+      - "/authors"
+      - "/authors/*"
+      - "/author"
+      - "/author/*"
   books:
     paths:
-      - '/books'
-      - '/books/*'
+      - "/books"
+      - "/books/*"
 serviceEndpoints:
   httpbin:
-    url: 'https://httpbin.org'
+    url: "https://httpbin.org"
   authorService:
-    url: 'http://api-author:3000'
+    url: "http://api-author:3000"
   bookService:
-    url: 'http://api-book:3001'
+    url: "http://api-book:3001"
 policies:
   - basic-auth
   - cors

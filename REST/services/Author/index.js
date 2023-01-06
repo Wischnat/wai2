@@ -1,20 +1,88 @@
 let express = require("express");
-const { getClient } = require("./connect");
+let bodyParser = require("body-parser");
+
 let app = express();
+let jsonParser = bodyParser.json();
 
-app.get("/authors", async (req, res, next) => {
-  const client = await getClient();
+const initializeServer = async () => {
+  app.use((req, res, next) => {
+    console.info(`New request to ${req.path}`);
+    next();
+  });
 
-  const entries = await client.query("SELECT * FROM authors;");
-  console.log(`Database entries for authors: ${entries.rowCount} row(s)`);
-  console.log(Object.keys(entries.rows?.[0]).join("\t"));
-  console.log(
-    `${entries.rows.map((r) => Object.values(r).join("\t")).join("\n")}`
-  );
-  await client.end();
-  res.json(entries.rows);
-});
+  const knex = require("knex")({
+    client: "pg",
+    connection: {
+      host: "api-author-db",
+      user: "postgres",
+      password: "postgres",
+      database: "author_db",
+      debug: true,
+    },
+  });
 
-app.listen(3000, () => {
-  console.log("Server running on port 3000");
-});
+  app.get("/author/:id", async (req, res, next) => {
+    const author_id = req.params.id;
+    knex
+      .select("*")
+      .from("authors")
+      .where({ author_id: author_id })
+      .then((author) => {
+        console.log(author[0]);
+        res.json(author[0]);
+      });
+  });
+
+  app.get("/authors", async (req, res, next) => {
+    knex
+      .select("*")
+      .from("authors")
+      .where("author_id", ">", "0")
+      .then((authors) => {
+        console.log(authors);
+        res.json(authors);
+      });
+  });
+
+  app.post("/author", jsonParser, async (req, res, next) => {
+    const { author } = req.body;
+    knex("authors")
+      .insert(author)
+      .returning(["author_id", "firstname", "lastname", "age"])
+      .then((author) => {
+        console.log(author[0]);
+        res.json(author[0]);
+      });
+  });
+
+  app.put("/author/:id", jsonParser, async (req, res, next) => {
+    const author_id = req.params.id;
+    const { updateValues } = req.body;
+    knex("authors")
+      .update(updateValues)
+      .where("author_id", author_id)
+      .returning(["author_id", "firstname", "lastname", "age"])
+      .then((author) => {
+        console.log(author[0]);
+        res.json(author[0]);
+      });
+  });
+
+  app.delete("/author/:id", async (req, res, next) => {
+    const author_id = req.params.id;
+    knex("authors")
+      .where("author_id", author_id)
+      .delete()
+      .returning(["author_id", "firstname", "lastname", "age"])
+      .then((author) => {
+        console.log(author[0]);
+        res.json(author[0]);
+      });
+  });
+
+  app.listen(3000, () => {
+    console.log("Server running on port 3000");
+  });
+};
+
+initializeServer();

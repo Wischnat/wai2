@@ -9,5 +9,5 @@ CREATE TABLE books (
 );
 
 
-INSERT INTO books (title, author, release_year) VALUES ('Alle meine Entons', 1, 2022);
-INSERT INTO books (title, author, release_year) VALUES ('Schneewitchen', 2, 2023);
+INSERT INTO books (title, author, release_year) VALUES ('Alle meine Entons', '1', 2022);
+INSERT INTO books (title, author, release_year) VALUES ('Schneewitchen', '2', 2023);
