@@ -16,6 +16,8 @@ apiEndpoints:
     paths:
       - "/books"
       - "/books/*"
+      - "/book"
+      - "/book/*"
 serviceEndpoints:
   httpbin:
     url: "https://httpbin.org"
