@@ -8,6 +8,11 @@ CREATE TABLE books (
   release_year INT
 );
 
-
-INSERT INTO books (title, author, release_year) VALUES ('Alle meine Entons', '1', 2022);
-INSERT INTO books (title, author, release_year) VALUES ('Schneewitchen', '2', 2023);
+DO
+$do$
+BEGIN 
+   FOR i IN 1..5000 LOOP
+      INSERT INTO books (title, author, release_year) VALUES (md5(random()::text), floor(random() * 999 + 1)::int, random() * 123 + 1900);                       -- declare target columns!
+   END LOOP;
+END
+$do$;
