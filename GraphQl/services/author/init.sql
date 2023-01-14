@@ -8,5 +8,11 @@ CREATE TABLE authors (
   age INT
 );
 
-INSERT INTO authors (firstname, lastname, age) VALUES ('John', 'Doe', 100);
-INSERT INTO authors (firstname, lastname, age) VALUES ('Alex', 'Wick', 55);
+DO
+$do$
+BEGIN 
+   FOR i IN 1..1000 LOOP
+      INSERT INTO authors (firstname, lastname, age) VALUES (md5(random()::text), md5(random()::text), random() * 81 + 18);                       -- declare target columns!
+   END LOOP;
+END
+$do$;
