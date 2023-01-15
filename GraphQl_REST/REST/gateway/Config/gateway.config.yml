@@ -1,0 +1,61 @@
+http:
+  port: 8080
+admin:
+  port: 9876
+apiEndpoints:
+  api:
+    paths:
+      - /ip
+  authors:
+    paths:
+      - "/authors"
+      - "/authors/*"
+      - "/author"
+      - "/author/*"
+  books:
+    paths:
+      - "/books"
+      - "/books/*"
+      - "/book"
+      - "/book/*"
+serviceEndpoints:
+  httpbin:
+    url: "https://httpbin.org"
+  authorService:
+    url: "http://rest-api-author:3000"
+  bookService:
+    url: "http://rest-api-book:3001"
+policies:
+  - basic-auth
+  - cors
+  - expression
+  - key-auth
+  - log
+  - oauth2
+  - proxy
+  - rate-limit
+pipelines:
+  authorPipeline:
+    apiEndpoints:
+      - authors
+    policies:
+      - proxy:
+          - action:
+              serviceEndpoint: authorService
+              changeOrigin: true
+  bookPipeline:
+    apiEndpoints:
+      - books
+    policies:
+      - proxy:
+          - action:
+              serviceEndpoint: bookService
+              changeOrigin: true
+  default:
+    apiEndpoints:
+      - api
+    policies:
+      - proxy:
+          - action:
+              serviceEndpoint: httpbin
+              changeOrigin: true

@@ -1,0 +1,150 @@
+version: "3.8"
+
+networks:
+  graphql:
+  rest:
+  graphql-rest:
+  author-net:
+  book-net:
+
+services:
+  #### GraphQL ####
+  graphql-gateway:
+    build: ./GraphQl/gateway
+    container_name: graphql-gateway
+    ports:
+      - "8081:8080"
+      - "4000:4000"
+    environment:
+      - LOG_LEVEL=debug
+    networks:
+      - graphql
+    depends_on:
+      - graphql-api-author
+      - graphql-api-book
+
+  graphql-api-author:
+    build: ./GraphQl/services/author
+    container_name: graphql-api-author
+    command: "node index.js"
+    ports:
+      - "4001:4001"
+    environment:
+      - LOG_LEVEL=debug
+    networks:
+      - graphql
+      - graphql-rest
+
+  graphql-api-book:
+    build: ./GraphQl/services/book
+    container_name: graphql-api-book
+    command: "node index.js"
+    ports:
+      - "4002:4002"
+    environment:
+      - LOG_LEVEL=debug
+    networks:
+      - graphql
+      - graphql-rest
+
+  #### REST ####
+  rest-gateway:
+    build: ./REST/gateway
+    container_name: rest-gateway
+    ports:
+      - "80:8080"
+      - "9876:9876"
+      - "8443:8443"
+    environment:
+      - LOG_LEVEL=debug
+    networks:
+      - graphql-rest
+      - rest
+    depends_on:
+      - rest-api-author
+      - rest-api-book
+
+  rest-api-author:
+    build: ./REST/services/Author
+    container_name: rest-api-author
+    command: "node index.js"
+    ports:
+      - "3000:3000"
+    networks:
+      - rest
+      - author-net
+    depends_on:
+      - rest-api-author-db
+
+  rest-api-book:
+    build: ./REST/services/Book
+    container_name: rest-api-book
+    command: "node index.js"
+    ports:
+      - "3001:3001"
+    networks:
+      - rest
+      - book-net
+    depends_on:
+      - rest-api-book-db
+
+  #### REST DB ####
+  rest-api-author-db:
+    image: postgres
+    restart: always
+    command:
+      - "postgres"
+      - "-c"
+      - "max_connections=1200"
+      - "-c"
+      - "idle_session_timeout=10000"
+      - "-c"
+      - "idle_in_transaction_session_timeout=10000"
+    environment:
+      POSTGRES_DB: author_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+    ports:
+      - "5432:5432"
+    volumes:
+      - graphql-rest-author-db-data:/var/lib/postgresql/data
+      - "./REST/services/Author/init.sql:/docker-entrypoint-initdb.d/init.sql"
+    networks:
+      - author-net
+
+  rest-api-book-db:
+    image: postgres
+    restart: always
+    command:
+      - "postgres"
+      - "-c"
+      - "max_connections=1200"
+      - "-c"
+      - "idle_session_timeout=10000"
+      - "-c"
+      - "idle_in_transaction_session_timeout=10000"
+    environment:
+      POSTGRES_DB: book_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+    ports:
+      - "5433:5432"
+    volumes:
+      - graphql-rest-book-db-data:/var/lib/postgresql/data
+      - "./REST/services/Book/init.sql:/docker-entrypoint-initdb.d/init.sql"
+    networks:
+      - book-net
+
+volumes:
+  graphql-rest-author-db-data:
+    driver: local
+  graphql-rest-book-db-data:
+    driver: local
