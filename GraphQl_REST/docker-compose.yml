@@ -1,11 +1,12 @@
 version: "3.8"
 
 networks:
-  graphql:
-  rest:
-  graphql-rest:
-  author-net:
-  book-net:
+  # graphql:
+  # rest:
+  # combi:
+  # author-net:
+  # book-net:
+  all:
 
 services:
   #### GraphQL ####
@@ -18,7 +19,7 @@ services:
     environment:
       - LOG_LEVEL=debug
     networks:
-      - graphql
+      - all
     depends_on:
       - graphql-api-author
       - graphql-api-book
@@ -32,8 +33,7 @@ services:
     environment:
       - LOG_LEVEL=debug
     networks:
-      - graphql
-      - graphql-rest
+      - all
 
   graphql-api-book:
     build: ./GraphQl/services/book
@@ -44,22 +44,20 @@ services:
     environment:
       - LOG_LEVEL=debug
     networks:
-      - graphql
-      - graphql-rest
+      - all
 
   #### REST ####
   rest-gateway:
     build: ./REST/gateway
     container_name: rest-gateway
     ports:
-      - "80:8080"
+      - "8080:8080"
       - "9876:9876"
       - "8443:8443"
     environment:
       - LOG_LEVEL=debug
     networks:
-      - graphql-rest
-      - rest
+      - all
     depends_on:
       - rest-api-author
       - rest-api-book
@@ -71,8 +69,7 @@ services:
     ports:
       - "3000:3000"
     networks:
-      - rest
-      - author-net
+      - all
     depends_on:
       - rest-api-author-db
 
@@ -83,8 +80,7 @@ services:
     ports:
       - "3001:3001"
     networks:
-      - rest
-      - book-net
+      - all
     depends_on:
       - rest-api-book-db
 
@@ -114,7 +110,7 @@ services:
       - graphql-rest-author-db-data:/var/lib/postgresql/data
       - "./REST/services/Author/init.sql:/docker-entrypoint-initdb.d/init.sql"
     networks:
-      - author-net
+      - all
 
   rest-api-book-db:
     image: postgres
@@ -141,7 +137,7 @@ services:
       - graphql-rest-book-db-data:/var/lib/postgresql/data
       - "./REST/services/Book/init.sql:/docker-entrypoint-initdb.d/init.sql"
     networks:
-      - book-net
+      - all
 
 volumes:
   graphql-rest-author-db-data:

@@ -72,7 +72,7 @@ const resolvers = {
   Query: {
     author: async (_, { author_id }, { dataSources }) => {
       const res = await dataSources.authorsAPI.getAuthorByID(author_id);
-      return res[0];
+      return res;
     },
     authors: async (_, __, { dataSources }) => {
       // console.log(dataSources);
@@ -86,7 +86,7 @@ const resolvers = {
         lastname,
         age
       );
-      return author[0];
+      return author;
     },
     updateAuthor: async (
       _,
@@ -98,21 +98,17 @@ const resolvers = {
         lastname,
         age,
       });
-      return author[0];
+      return author;
     },
     deleteAuthor: async (_, { author_id }, { dataSources }) => {
       const author = await dataSources.authorsAPI.deleteAuthor(author_id);
-      return author[0];
+      return author;
     },
   },
   Author: {
     async __resolveReference({ author_id }, { dataSources }) {
-      console.log("AUTHOR QUERY");
-      console.log(author_id);
-      console.log(dataSources);
       const res = await dataSources.authorsAPI.getAuthorByID(author_id);
-      console.log(res);
-      return res[0];
+      return res;
     },
   },
 };

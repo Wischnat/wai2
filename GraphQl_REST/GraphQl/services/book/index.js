@@ -65,7 +65,9 @@ const typeDefs = gql`
 const resolvers = {
   Query: {
     book: async (_, { book_id }, { dataSources }) => {
-      const res = await dataSources.booksAPI.getBookByID(book_id);
+      const res = [];
+      res.push(await dataSources.booksAPI.getBookByID(book_id));
+      console.log(res);
       authorFormatter(res);
       return res[0];
     },
@@ -77,10 +79,9 @@ const resolvers = {
   },
   Mutation: {
     addBook: async (_, { title, author, release_year }, { dataSources }) => {
-      const book = await dataSources.booksAPI.addBook(
-        title,
-        author,
-        release_year
+      const book = [];
+      book.push(
+        await dataSources.booksAPI.addBook(title, author, release_year)
       );
       authorFormatter(book);
       return book[0];
@@ -90,23 +91,28 @@ const resolvers = {
       { book_id, title, author, release_year },
       { dataSources }
     ) => {
-      const book = await dataSources.booksAPI.updateBook(book_id, {
-        title,
-        author,
-        release_year,
-      });
+      const book = [];
+      book.push(
+        await dataSources.booksAPI.updateBook(book_id, {
+          title,
+          author,
+          release_year,
+        })
+      );
       authorFormatter(book);
       return book[0];
     },
     deleteBook: async (_, { book_id }, { dataSources }) => {
-      const book = await dataSources.booksAPI.deleteBook(book_id);
+      const book = [];
+      book.push(await dataSources.booksAPI.deleteBook(book_id));
       authorFormatter(book);
       return book[0];
     },
   },
   Book: {
     async __resolveReference({ book_id }, { dataSources }) {
-      const book = await dataSources.booksAPI.getBookByID(book_id);
+      const book = [];
+      book.push(await dataSources.booksAPI.getBookByID(book_id));
       authorFormatter(book);
       return book[0];
     },
