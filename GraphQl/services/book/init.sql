@@ -11,7 +11,7 @@ CREATE TABLE books (
 DO
 $do$
 BEGIN 
-   FOR i IN 1..5000 LOOP
+   FOR i IN 1..2000 LOOP
       INSERT INTO books (title, author, release_year) VALUES (md5(random()::text), floor(random() * 999 + 1)::int, random() * 123 + 1900);                       -- declare target columns!
    END LOOP;
 END
