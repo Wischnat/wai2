@@ -77,7 +77,18 @@ class BookAPI {
           responseData += chunk;
         });
         res.on("end", () => {
-          const json = JSON.parse(responseData.toString());
+          let json;
+          if (responseData == "") {
+            json = {
+              book_id: -1,
+              title: null,
+              author: null,
+              release_year: null,
+            };
+          } else {
+            json = JSON.parse(responseData.toString());
+          }
+          console.log(json);
           resolve(json);
         });
       });
@@ -175,7 +186,18 @@ class BookAPI {
           responseData += chunk;
         });
         res.on("end", () => {
-          const json = JSON.parse(responseData.toString());
+          let json;
+          if (responseData == "") {
+            json = {
+              book_id: -1,
+              title: null,
+              author: null,
+              release_year: null,
+            };
+          } else {
+            json = JSON.parse(responseData.toString());
+          }
+          console.log(json);
           resolve(json);
         });
       });

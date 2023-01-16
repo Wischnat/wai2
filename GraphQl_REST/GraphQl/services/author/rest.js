@@ -78,7 +78,18 @@ class AuthorAPI {
           responseData += chunk;
         });
         res.on("end", () => {
-          const json = JSON.parse(responseData.toString());
+          let json;
+          if (responseData == "") {
+            json = {
+              author_id: -1,
+              firstname: null,
+              lastname: null,
+              age: null,
+            };
+          } else {
+            json = JSON.parse(responseData.toString());
+          }
+          console.log(json);
           resolve(json);
         });
       });
@@ -176,7 +187,18 @@ class AuthorAPI {
           responseData += chunk;
         });
         res.on("end", () => {
-          const json = JSON.parse(responseData.toString());
+          let json;
+          if (responseData == "") {
+            json = {
+              author_id: -1,
+              firstname: null,
+              lastname: null,
+              age: null,
+            };
+          } else {
+            json = JSON.parse(responseData.toString());
+          }
+          console.log(json);
           resolve(json);
         });
       });
